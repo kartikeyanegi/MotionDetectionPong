@@ -78,16 +78,14 @@ def get_gradient(img1,img2,thresh=None):
 
     m,n = img1.shape
     grad = np.zeros((m,n))
-    #max_grad = float('-inf')
     for i in range(m):
         for j in range(n):
             g = (u[i,j]**2+v[i,j]**2)**0.5
             if thresh is None:
                 grad[i,j]=g
-                #max_grad = max(max_grad,g)
+
                 continue
             if g >thresh:
                 grad[i,j]=255
 
-    #print ("Max grad",max_grad)
     return grad
