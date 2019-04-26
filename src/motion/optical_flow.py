@@ -74,10 +74,22 @@ def get_gradient(img1,img2,thresh=None):
         thresh: gradient threshold to return a binary image, 
         if it is none return gradient information as is without thresholding.
     """
+    import time
+    
     u,v = HornSchunck(img1,img2)
 
     m,n = img1.shape
     grad = np.zeros((m,n))
+    init_time = time.time()
+    
+    magn = np.sqrt(np.power(u,2)+np.power(v,2))
+    #print ("np time",time.time()-init_time)
+    if thresh is None:
+        grad=magn
+    else:
+        grad[np.where(magn>thresh)]=255
+    """
+    init_time = time.time()
     for i in range(m):
         for j in range(n):
             g = (u[i,j]**2+v[i,j]**2)**0.5
@@ -87,5 +99,6 @@ def get_gradient(img1,img2,thresh=None):
                 continue
             if g >thresh:
                 grad[i,j]=255
-
+    print ("for time",time.time()-init_time)
+    """
     return grad

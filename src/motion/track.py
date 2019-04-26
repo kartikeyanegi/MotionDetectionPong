@@ -30,13 +30,16 @@ state_covs = np.eye(4)
 ## Setup camera
 ##################################################################
 ##################################################################
-res_x = 466//2
-res_y = 240//2
-grad_thresh = 200
+res_x = 466
+res_y = 240
+grad_thresh = 300
 
 # HSV Values to filter between
 filter_low = np.array([0,150,0])
 filter_up = np.array([20,255,255])
+
+#filter_low = np.array([0,0,0])
+#filter_up = np.array([255,255,255])
 
 cap = cv2.VideoCapture(0)
 
@@ -46,8 +49,8 @@ old_img = cv2.resize(old_img,(int(res_x),int(res_y)))
 old_img = cv2.cvtColor(old_img, cv2.COLOR_BGR2HSV)
 old_img = cv2.inRange(old_img, filter_low, filter_up)
 
-x_loc = res_x/2
-y_loc = res_y/2
+x_loc = res_x//2
+y_loc = res_y//2
 line_length = orig_res[0]//10
 
 while(True):
@@ -59,15 +62,20 @@ while(True):
     gray = cv2.cvtColor(rgb, cv2.COLOR_BGR2GRAY)
     hsv = cv2.cvtColor(rgb, cv2.COLOR_BGR2HSV)
     mask = cv2.inRange(hsv, filter_low, filter_up)
+    #cv2.imshow('masked',mask)
     new_img = cv2.bitwise_and(gray,gray, mask= mask)
     
     ## Calculate center of movement by taking the average of points detected by optical flow
-    grad =  get_gradient(old_img,new_img,thresh=None)
-    points = np.array(np.where(grad>grad_thresh))
+    grad =  get_gradient(old_img,new_img,thresh=grad_thresh)
+    #cv2.imshow('optical flow',grad)
+    points = np.array(np.where(grad>0))
+    
+    
     center_of_movement = np.mean(points,axis=1).astype(int)
     
     ## If there is any moving object update the kalman filter and the new x,y location accordingly
-    if center_of_movement[0]>0 and center_of_movement[1]>0:
+    if center_of_movement[0]>0 and center_of_movement[1]>0 and points.shape[1]>100:
+        print(points.shape[1])
         state_means, state_covs = kf.filter_update(state_means,state_covs,center_of_movement)
         x_loc = state_means[2]
         y_loc = state_means[0]
