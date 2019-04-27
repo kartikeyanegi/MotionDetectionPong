@@ -1,187 +1,97 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Apr 19 15:19:06 2019
-
-@author: karti
-"""
-
 import pygame
 
-### Colors
-WHITE = (255, 255, 255)
-BLACK = (0,0,0)
+class Game(object):
+    def __init__(self):
+        ### Colors
+        self.WHITE = (255, 255, 255)
+        self.BLACK = (0,0,0)
 
-### Constants
-W = 800
-H = 600
-pygame.font.init()
-comic = pygame.font.SysFont('Comic Sans MS', 30)
+        ### Constants
+        self.W = 466
+        self.H = 240
+        pygame.font.init()
+        self.comic = pygame.font.SysFont('Comic Sans MS', 30)
 
-### Variables
-wt = 10
-mplay = False
+        ### Variables
+        self.wt = 2 ## wait time
+        self.p1x = self.W/30
+        self.p1y = self.H/2 - ((self.W/60)**2)/2
 
-p1x = W/30
-p1y = H/2 - ((W/60)**2)/2
+        self.p2x = self.W-(self.W/30)
+        self.p2y = self.H/2 - ((self.W/60)**2)/2
 
-p2x = W-(W/30)
-p2y = H/2 - ((W/60)**2)/2
+        self.p1score = 0
+        self.p2score = 0
 
-p1score = 0
-p2score = 0
+        self.dm = self.H/40
 
-w_p = False
-s_p = False
-wsr = False
-u_p = False
-d_p = False
-udr = False
+        self.paddle_width = self.W/60
+        self.paddle_height = self.H/3
 
-dm = H/40
+        self.bsd = 10
 
-paddle_width = W/60
-paddle_height = 100
+        self.bx = self.W/2
+        self.by = self.H/2
+        self.bw = self.W/65
+        self.bxv = -self.H/60
+        self.byv = 0
 
-bsd = 10
+        ### Initialize
+        self.screen = pygame.display.set_mode((self.W, self.H))
+        pygame.display.set_caption('Snake ML v.1.0.0')
+        self.screen.fill(self.BLACK)
+        pygame.display.flip()
+        self.running = True
+        
 
-bx = W/2
-by = H/2
-bw = W/65
-bxv = H/60
-bxv = -bxv
-byv = 0
+    def update(self,y_loc):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+        self.screen.fill(self.BLACK)
+        self.bigy=self.H*y_loc-self.paddle_height/2
+        self.upblnv()
+        self.drawscore()
+        self.drawball()
+        self.drawpaddle(self.p1x, self.bigy, self.paddle_width, self.paddle_height)
+        self.drawpaddle(self.p2x, self.bigy, self.paddle_width, self.paddle_height)
+        pygame.display.flip()
+        pygame.time.wait(self.wt)
 
-### Functions
-def drawpaddle(x, y, w, h):
-    pygame.draw.rect(screen, WHITE, (x, y, w, h))
+    ### Drawing Functions
+    def drawpaddle(self,x, y, w, h):
+        pygame.draw.rect(self.screen, self.WHITE, (x, y, w, h))
 
-def drawball(x, y):
-    pygame.draw.circle(screen, WHITE, (int(x), int(y)), int(bw))
+    def drawball(self):
+        pygame.draw.circle(self.screen, self.WHITE, (int(self.bx), int(self.by)), int(self.bw))
 
-def uploc():
-    global p1y
-    global p2y
-    if w_p:
-        if p1y-(dm) < 0:
-            p1y = 0
-        else:
-            p1y -= dm
-    elif s_p:
-        if p1y+(dm)+paddle_height > H:
-            p1y = H-paddle_height
-        else:
-            p1y += dm
-    if u_p:
-        if p2y-(dm) < 0:
-            p2y = 0
-        else:
-            p2y -= dm
-    elif d_p:
-        if p2y+(dm)+paddle_height > H:
-            p2y = H-paddle_height
-        else:
-            p2y += dm
+    def upblnv(self):
+        if (self.bx+self.bxv < self.p1x+self.paddle_width) and (( self.bigy< self.by+self.byv+self.bw) and (self.by+self.byv-self.bw < self.bigy+self.paddle_height)):
+            self.bxv = -self.bxv
+            self.byv = ((self.bigy+(self.bigy+self.paddle_height))/2)-self.by
+            self.byv = -self.byv/((5*self.bw)/7)
+        elif self.bx+self.bxv < 0:
+            self.p2score += 1
+            self.bx = self.W/2
+            self.bxv = self.H/60
+            self.by = self.H/2
+            self.byv = 0
+        if (self.bx+self.bxv > self.p2x) and ((self.bigy < self.by+self.byv+self.bw) and (self.by+self.byv-self.bw < self.bigy+self.paddle_height)):
+            self.bxv = -self.bxv
+            self.byv = ((self.bigy+(self.bigy+self.paddle_height))/2)-self.by
+            self.byv = -self.byv/((5*self.bw)/7)
+        elif self.bx+self.bxv > self.W:
+            self.p1score += 1
+            self.bx = self.W/2
+            self.bxv = -self.H/60
+            self.by = self.H/2
+            self.byv = 0
+        if self.by+self.byv > self.H or self.by+self.byv < 0:
+            self.byv = -self.byv
 
-def upblnv():
-    global bx
-    global bxv
-    global by
-    global byv
-    global p2score
-    global p1score
+        self.bx += self.bxv
+        self.by += self.byv
 
-    if (bx+bxv < p1x+paddle_width) and ((p1y < by+byv+bw) and (by+byv-bw < p1y+paddle_height)):
-        bxv = -bxv
-        byv = ((p1y+(p1y+paddle_height))/2)-by
-        byv = -byv/((5*bw)/7)
-    elif bx+bxv < 0:
-        p2score += 1
-        bx = W/2
-        bxv = H/60
-        by = H/2
-        byv = 0
-    if (bx+bxv > p2x) and ((p2y < by+byv+bw) and (by+byv-bw < p2y+paddle_height)):
-        bxv = -bxv
-        byv = ((p2y+(p2y+paddle_height))/2)-by
-        byv = -byv/((5*bw)/7)
-    elif bx+bxv > W:
-        p1score += 1
-        bx = W/2
-        bxv = -H/60
-        by = H/2
-        byv = 0
-    if by+byv > H or by+byv < 0:
-        byv = -byv
-
-    bx += bxv
-    by += byv
-
-def drawscore():
-    score = comic.render(str(p1score) + " - " + str(p2score), False, WHITE)
-    screen.blit(score, (W/2,30))
-
-### Initialize
-screen = pygame.display.set_mode((W, H))
-pygame.display.set_caption('Snake ML v.1.0.0')
-screen.fill(BLACK)
-pygame.display.flip()
-
-running = True
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                running = False
-            if event.key == pygame.K_w:
-                w_p = True
-                if s_p == True:
-                    s_p = False
-                    wsr = True
-            if event.key == pygame.K_s:
-                s_p = True
-                if w_p == True:
-                    w_p = False
-                    wsr = True
-            if event.key == pygame.K_UP:
-                u_p = True
-                if d_p == True:
-                    d_p = False
-                    udr = True
-            if event.key == pygame.K_DOWN:
-                d_p = True
-                if u_p == True:
-                    u_p = False
-                    udr = True
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_w:
-                w_p = False
-                if wsr == True:
-                    s_p = True
-                    wsr = False
-            if event.key == pygame.K_s:
-                s_p = False
-                if wsr == True:
-                    w_p = True
-                    wsr = False
-            if event.key == pygame.K_UP:
-                u_p = False
-                if udr == True:
-                    d_p = True
-                    udr = False
-            if event.key == pygame.K_DOWN:
-                d_p = False
-                if udr == True:
-                    u_p = True
-                    udr = False
-
-    screen.fill(BLACK)
-    uploc()
-    upblnv()
-    drawscore()
-    drawball(bx, by)
-    drawpaddle(p1x, p1y, paddle_width, paddle_height)
-    drawpaddle(p2x, p2y, paddle_width, paddle_height)
-    pygame.display.flip()
-    pygame.time.wait(wt)
+    def drawscore(self):
+        score = self.comic.render(str(self.p1score) + " - " + str(self.p2score), False, self.WHITE)
+        self.screen.blit(score, (self.W/2,30))
