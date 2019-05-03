@@ -1,9 +1,12 @@
 from physics.pong import Game
 from motion.track import Tracker
 
-tracker  = Tracker(grad_thresh=200)
+player  = Tracker(color='blue')
+#p2  = Tracker(color='green')
 game = Game()
 
 while game.running:
-    tracker.track(show=True)
-    game.update(tracker.y_loc)
+    player.track(show=False)
+    #opponent = read()
+    #send(player.y_loc)
+    game.update(player.y_loc,opponent)
