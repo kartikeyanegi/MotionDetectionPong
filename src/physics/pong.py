@@ -7,8 +7,8 @@ class Game(object):
         self.BLACK = (0,0,0)
 
         ### Constants
-        self.W = 466
-        self.H = 240
+        self.W = 600
+        self.H = 300
         pygame.font.init()
         self.comic = pygame.font.SysFont('Comic Sans MS', 30)
 
@@ -26,35 +26,40 @@ class Game(object):
         self.dm = self.H/40
 
         self.paddle_width = self.W/60
-        self.paddle_height = self.H/3
+        self.paddle_height = self.H/4
 
         self.bsd = 10
-
+        
+        self.bw = self.W/65
+        self.vely = ((5*self.bw)/7)
+        self.velx = 20
         self.bx = self.W/2
         self.by = self.H/2
-        self.bw = self.W/65
-        self.bxv = -self.H/60
+        
+        self.bxv = -self.velx
         self.byv = 0
+        
 
         ### Initialize
         self.screen = pygame.display.set_mode((self.W, self.H))
-        pygame.display.set_caption('Snake ML v.1.0.0')
+        pygame.display.set_caption('Hand Pong v0.0.1 beta')
         self.screen.fill(self.BLACK)
         pygame.display.flip()
         self.running = True
         
 
-    def update(self,y_loc):
+    def update(self,y_loc1,y_loc2):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
         self.screen.fill(self.BLACK)
-        self.bigy=self.H*y_loc-self.paddle_height/2
+        self.p1y=self.H*y_loc1-self.paddle_height/2
+        self.p2y=self.H*y_loc2-self.paddle_height/2
         self.upblnv()
         self.drawscore()
         self.drawball()
-        self.drawpaddle(self.p1x, self.bigy, self.paddle_width, self.paddle_height)
-        self.drawpaddle(self.p2x, self.bigy, self.paddle_width, self.paddle_height)
+        self.drawpaddle(self.p1x, self.p1y, self.paddle_width, self.paddle_height)
+        self.drawpaddle(self.p2x, self.p2y, self.paddle_width, self.paddle_height)
         pygame.display.flip()
         pygame.time.wait(self.wt)
 
@@ -66,24 +71,24 @@ class Game(object):
         pygame.draw.circle(self.screen, self.WHITE, (int(self.bx), int(self.by)), int(self.bw))
 
     def upblnv(self):
-        if (self.bx+self.bxv < self.p1x+self.paddle_width) and (( self.bigy< self.by+self.byv+self.bw) and (self.by+self.byv-self.bw < self.bigy+self.paddle_height)):
+        if (self.bx+self.bxv < self.p1x+self.paddle_width) and (( self.p1y< self.by+self.byv+self.bw) and (self.by+self.byv-self.bw < self.p1y+self.paddle_height)):
             self.bxv = -self.bxv
-            self.byv = ((self.bigy+(self.bigy+self.paddle_height))/2)-self.by
-            self.byv = -self.byv/((5*self.bw)/7)
+            self.byv = ((self.p1y+(self.p1y+self.paddle_height))/2)-self.by
+            self.byv = -self.byv/self.vely
         elif self.bx+self.bxv < 0:
             self.p2score += 1
             self.bx = self.W/2
-            self.bxv = self.H/60
+            self.bxv = self.velx
             self.by = self.H/2
             self.byv = 0
-        if (self.bx+self.bxv > self.p2x) and ((self.bigy < self.by+self.byv+self.bw) and (self.by+self.byv-self.bw < self.bigy+self.paddle_height)):
+        if (self.bx+self.bxv > self.p2x) and ((self.p2y < self.by+self.byv+self.bw) and (self.by+self.byv-self.bw < self.p2y+self.paddle_height)):
             self.bxv = -self.bxv
-            self.byv = ((self.bigy+(self.bigy+self.paddle_height))/2)-self.by
-            self.byv = -self.byv/((5*self.bw)/7)
+            self.byv = ((self.p2y+(self.p2y+self.paddle_height))/2)-self.by
+            self.byv = -self.byv/self.vely
         elif self.bx+self.bxv > self.W:
             self.p1score += 1
             self.bx = self.W/2
-            self.bxv = -self.H/60
+            self.bxv = -self.velx
             self.by = self.H/2
             self.byv = 0
         if self.by+self.byv > self.H or self.by+self.byv < 0:

@@ -86,6 +86,8 @@ def get_gradient(img1,img2,thresh=None):
     #print ("np time",time.time()-init_time)
     if thresh is None:
         grad=magn
+        #print(magn.mean())
+        #grad[np.where(magn>0)]=255
     else:
         grad[np.where(magn>thresh)]=255
     """
