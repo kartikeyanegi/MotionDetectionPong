@@ -5,11 +5,10 @@ from server.run import Server
 player  = Tracker(color='blue')
 #p2  = Tracker(color='green')
 game = Game()
-s = Server(host="localhost", topic="player1")
+s = Server(handler=game.opponent, host="localhost", sender="player1", receiver="player2")
 
 while game.running:
     player.track(show=False)
     s.send(player.y_loc)
-    #opponent = read()
     #send(player.y_loc)
-    game.update(player.y_loc,opponent)
+    game.update(player.y_loc)

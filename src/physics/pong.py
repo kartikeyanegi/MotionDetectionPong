@@ -47,14 +47,16 @@ class Game(object):
         pygame.display.flip()
         self.running = True
         
+    def opponent(self, data):
+        y_loc2 = float(data['data'])
+        self.p2y=self.H*y_loc2-self.paddle_height/2
 
-    def update(self,y_loc1,y_loc2):
+    def update(self,y_loc1):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
         self.screen.fill(self.BLACK)
         self.p1y=self.H*y_loc1-self.paddle_height/2
-        self.p2y=self.H*y_loc2-self.paddle_height/2
         self.upblnv()
         self.drawscore()
         self.drawball()
