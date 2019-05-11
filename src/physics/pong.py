@@ -50,29 +50,28 @@ class Game(object):
         pygame.display.flip()
         self.running = True
         
-<<<<<<< HEAD
     def opponent(self, data):
         y_loc2 = float(data['data'])
         self.p2y=self.H*y_loc2-self.paddle_height/2
 
-    def update(self,y_loc1):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.running = False
-        self.screen.fill(self.BLACK)
-        self.p1y=self.H*y_loc1-self.paddle_height/2
-        self.upblnv()
-        self.drawscore()
-        self.drawball()
-        self.drawpaddle(self.p1x, self.p1y, self.paddle_width, self.paddle_height)
-        self.drawpaddle(self.p2x, self.p2y, self.paddle_width, self.paddle_height)
-        pygame.display.flip()
-        pygame.time.wait(self.wt)
-=======
+    # def update(self,y_loc1):
+    #     for event in pygame.event.get():
+    #         if event.type == pygame.QUIT:
+    #             self.running = False
+    #     self.screen.fill(self.BLACK)
+    #     self.p1y=self.H*y_loc1-self.paddle_height/2
+    #     self.upblnv()
+    #     self.drawscore()
+    #     self.drawball()
+    #     self.drawpaddle(self.p1x, self.p1y, self.paddle_width, self.paddle_height)
+    #     self.drawpaddle(self.p2x, self.p2y, self.paddle_width, self.paddle_height)
+    #     pygame.display.flip()
+    #     pygame.time.wait(self.wt)
+
     def get_screen(self):
         return self.screen
 
-    def update(self,y_loc1,y_loc2):
+    def update(self,y_loc1):
         if self.running:
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
@@ -80,7 +79,7 @@ class Game(object):
                         self.running = False
             self.drawbg()
             self.p1y=self.H*y_loc1-self.paddle_height/2
-            self.p2y=self.H*y_loc2-self.paddle_height/2
+            # self.p2y=self.H*y_loc2-self.paddle_height/2
             self.upblnv()
             self.drawscore()
             self.drawball()
@@ -97,7 +96,6 @@ class Game(object):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     quit()
->>>>>>> dbcd45aecacdd7d9eb852ead204371d334d70a49
 
     ### Drawing Functions
     def drawbg(self):
@@ -138,12 +136,7 @@ class Game(object):
         self.by += self.byv
 
     def drawscore(self):
-<<<<<<< HEAD
-        score = self.comic.render(str(self.p1score) + " - " + str(self.p2score), False, self.WHITE)
-        self.screen.blit(score, (self.W/2,30))
-=======
         string  = str(self.p1score) + "    " + str(self.p2score)
         score = self.comic.render(string, False, self.WHITE)
         position = self.W/2 - score.get_width()/2.5
         self.screen.blit(score, (position, 30))
->>>>>>> dbcd45aecacdd7d9eb852ead204371d334d70a49
