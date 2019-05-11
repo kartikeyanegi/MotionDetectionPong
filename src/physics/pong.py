@@ -1,4 +1,5 @@
 import pygame
+import sys
 
 class Game(object):
     def __init__(self, flag):
@@ -72,12 +73,17 @@ class Game(object):
     def get_screen(self):
         return self.screen
 
-    def update(self,y_loc1):
+    def update(self,y_loc1, pubsub):
         if self.running:
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
                         self.running = False
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.quit()
+                        pubsub.unsubscribe()
+                        sys.exit()
+
             self.drawbg()
             self.p1y=self.H*y_loc1-self.paddle_height/2
             # self.p2y=self.H*y_loc2-self.paddle_height/2
@@ -98,10 +104,10 @@ class Game(object):
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
                         self.running = True
-        for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    quit()
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.quit()
+                        pubsub.unsubscribe()
+                        sys.exit()
 
     ### Drawing Functions
     def drawbg(self):

@@ -1,12 +1,14 @@
 import pygame
+import sys
 
 class Menu(object):
-    def __init__(self, screen):
+    def __init__(self, screen, pubsub):
         self.screen = screen
         pygame.font.init()
         self.text_format = pygame.font.SysFont('Comic Sans MS', 30)
         self.screen_width = 600
         self.H = 300
+        self.pubsub = pubsub
 
     def get_running(self):
         return self.running
@@ -40,7 +42,8 @@ class Menu(object):
                             menu = False
                         if selected=="quit":
                             pygame.quit()
-                            quit()
+                            self.pubsub.unsubscribe()
+                            sys.exit()
      
             # Main Menu UI
             self.screen.fill(blue)

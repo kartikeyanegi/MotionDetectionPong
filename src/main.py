@@ -21,13 +21,13 @@ def main():
     game = Game(flag=False)
     s = Server(handler=game.opponent, host=args.host, sender=args.sender, receiver=args.receiver)
     screen = game.get_screen()
-    menu = Menu(screen)
+    menu = Menu(screen, s.pubsub)
     menu.main_menu()
 
     while True:
         player.track(show=False)
         s.send(player.y_loc)
-        game.update(player.y_loc)
+        game.update(player.y_loc, s.pubsub)
 
 if __name__ == "__main__":
     main()
