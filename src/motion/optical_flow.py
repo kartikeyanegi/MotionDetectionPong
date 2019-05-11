@@ -41,7 +41,6 @@ def HornSchunck(im1: np.ndarray, im2: np.ndarray, alpha: float=0.001, Niter: int
     if verbose:
         from .plots import plotderiv
         plotderiv(fx, fy, ft)
-#    print(fx[100,100],fy[100,100],ft[100,100])
 
         # Iteration to reduce error
     for _ in range(Niter):
@@ -65,7 +64,7 @@ def computeDerivatives(im1: np.ndarray, im2: np.ndarray) -> Tuple[np.ndarray, np
 
     return fx, fy, ft
 
-def get_gradient(img1,img2,thresh=None):
+def get_gradient(img1,img2,thresh):
     """
     get the magnitude of movement gradient as the same shape as the input images.
     args:
@@ -74,33 +73,15 @@ def get_gradient(img1,img2,thresh=None):
         thresh: gradient threshold to return a binary image, 
         if it is none return gradient information as is without thresholding.
     """
-    import time
     
     u,v = HornSchunck(img1,img2)
 
     m,n = img1.shape
     grad = np.zeros((m,n))
-    init_time = time.time()
     
     magn = np.sqrt(np.power(u,2)+np.power(v,2))
-    #print ("np time",time.time()-init_time)
-    if thresh is None:
-        grad=magn
-        #print(magn.mean())
-        #grad[np.where(magn>0)]=255
-    else:
-        grad[np.where(magn>thresh)]=255
-    """
-    init_time = time.time()
-    for i in range(m):
-        for j in range(n):
-            g = (u[i,j]**2+v[i,j]**2)**0.5
-            if thresh is None:
-                grad[i,j]=g
-
-                continue
-            if g >thresh:
-                grad[i,j]=255
-    print ("for time",time.time()-init_time)
-    """
+    # if thresh is None:
+    #     grad=magn
+    # else:
+    grad[np.where(magn>thresh)]=255
     return grad
