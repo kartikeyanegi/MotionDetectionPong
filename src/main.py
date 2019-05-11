@@ -18,7 +18,7 @@ if args.sender == None or args.receiver == None:
 
 def main():
     player  = Tracker(color='blue')
-    game = Game()
+    game = Game(flag=False)
     s = Server(handler=game.opponent, host=args.host, sender=args.sender, receiver=args.receiver)
     screen = game.get_screen()
     menu = Menu(screen)

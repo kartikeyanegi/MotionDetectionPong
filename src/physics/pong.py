@@ -1,8 +1,9 @@
 import pygame
 
 class Game(object):
-    def __init__(self):
+    def __init__(self, flag):
         ### Colors
+        self.flag = flag
         self.WHITE = (255, 255, 255)
         self.BLACK = (30,137,6)
         self.RED = (229, 17, 46)
@@ -83,8 +84,13 @@ class Game(object):
             self.upblnv()
             self.drawscore()
             self.drawball()
-            self.drawpaddle(self.p1x, self.p1y, self.paddle_width, self.paddle_height, self.RED)
-            self.drawpaddle(self.p2x, self.p2y, self.paddle_width, self.paddle_height, self.BLUE)
+            if self.flag:
+                self.drawpaddle(self.p1x, self.p1y, self.paddle_width, self.paddle_height, self.RED)
+                self.drawpaddle(self.p2x, self.p2y, self.paddle_width, self.paddle_height, self.BLUE)
+            else:
+                self.drawpaddle(self.p2x, self.p2y, self.paddle_width, self.paddle_height, self.RED)
+                self.drawpaddle(self.p1x, self.p1y, self.paddle_width, self.paddle_height, self.BLUE)
+
             pygame.display.flip()
             pygame.time.wait(self.wt)
         else:
@@ -109,7 +115,8 @@ class Game(object):
         pygame.draw.circle(self.screen, self.ORANGE, (int(self.bx), int(self.by)), int(self.bw))
 
     def upblnv(self):
-        if (self.bx+self.bxv < self.p1x+self.paddle_width) and (( self.p1y< self.by+self.byv+self.bw) and (self.by+self.byv-self.bw < self.p1y+self.paddle_height)):
+        if (self.bx+self.bxv < self.p1x+self.paddle_width) and  \
+        (( self.p1y< self.by+self.byv+self.bw) and (self.by+self.byv-self.bw < self.p1y+self.paddle_height)):
             self.bxv = -self.bxv
             self.byv = ((self.p1y+(self.p1y+self.paddle_height))/2)-self.by
             self.byv = -self.byv/self.vely
