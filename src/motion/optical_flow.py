@@ -1,87 +1,43 @@
-from scipy.ndimage.filters import convolve as filter2
-from typing import Tuple
+from scipy.ndimage.filters import convolve
 import numpy as np
-import cv2
 
-HSKERN = np.array([[1/12, 1/6, 1/12],
-                   [1/6,    0, 1/6],
-                   [1/12, 1/6, 1/12]], float)
+def HornSchunck(old_img, new_img, lamb=10, num_iters=8):
+    ## Roberts derivative kernels
+    Mx = np.array([[0, 1],
+                  [-1, 0]])  # kernel for computing d/dx
 
-kernelX = np.array([[-1, 1],
-                    [-1, 1]]) * .25  # kernel for computing d/dx
+    My = np.array([[1, 0],
+                  [0, -1]])  # kernel for computing d/dy
 
-kernelY = np.array([[-1, -1],
-                    [1, 1]]) * .25  # kernel for computing d/dy
+    ## Kernel for calculating U and V mean
+    K_avg = np.array([[0   , .25 , 0],
+                     [.25 ,  0  ,.25],
+                     [0   , .25 , 0]], float)
 
-kernelT = np.ones((2, 2))*.25
-
-
-def HornSchunck(im1: np.ndarray, im2: np.ndarray, alpha: float=0.001, Niter: int=8,
-                verbose: bool=False) -> Tuple[np.ndarray, np.ndarray]:
-    """
-    im1: image at t=0
-    im2: image at t=1
-    alpha: regularization constant
-    Niter: number of iteration
-    """
-    im1 = im1.astype(np.float32)
-    im2 = im2.astype(np.float32)
-
-    # set up initial velocities
-    uInitial = np.zeros([im1.shape[0], im1.shape[1]])
-    vInitial = np.zeros([im1.shape[0], im1.shape[1]])
-
-    # Set initial value for the flow vectors
-    U = uInitial
-    V = vInitial
+    old_img = old_img.astype(np.float32)
+    new_img = new_img.astype(np.float32)
+    m,n = new_img.shape
 
     # Estimate derivatives
-    [fx, fy, ft] = computeDerivatives(im1, im2)
+    Ex = convolve(new_img, Mx)
+    Ey = convolve(new_img, My)
+    Et = new_img-old_img
 
-    if verbose:
-        from .plots import plotderiv
-        plotderiv(fx, fy, ft)
+    ###### Initinialize values of u,v with zero
+    u = np.zeros((m,n))
+    v = np.zeros((m,n))
 
-        # Iteration to reduce error
-    for _ in range(Niter):
-        # %% Compute local averages of the flow vectors
-        uAvg = filter2(U, HSKERN)
-        vAvg = filter2(V, HSKERN)
-        der = (fx*uAvg + fy*vAvg + ft) / (alpha**2 + fx**2 + fy**2)
-        U = uAvg - fx * der
-        V = vAvg - fy * der
+    for _ in range(num_iters):
+        u_mean = convolve(u, K_avg)
+        v_mean = convolve(v, K_avg)
+        alpha = lamb*(Ex*u_mean + Ey*v_mean + Et) / (1+lamb*(Ex**2 + Ey**2))
+        u = u_mean - alpha * Ex 
+        v = v_mean - alpha * Ey
+    return u, v
 
-    return U, V
-
-
-def computeDerivatives(im1: np.ndarray, im2: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-
-    fx = filter2(im1, kernelX) + filter2(im2, kernelX)
-    fy = filter2(im1, kernelY) + filter2(im2, kernelY)
-
-    # ft = im2 - im1
-    ft = filter2(im1, kernelT) + filter2(im2, -kernelT)
-
-    return fx, fy, ft
-
-def get_gradient(img1,img2,thresh):
-    """
-    get the magnitude of movement gradient as the same shape as the input images.
-    args:
-        img1: np array with two channels(grayscale)
-        img2: np array same shape as img1
-        thresh: gradient threshold to return a binary image, 
-        if it is none return gradient information as is without thresholding.
-    """
-    
-    u,v = HornSchunck(img1,img2)
-
-    m,n = img1.shape
-    grad = np.zeros((m,n))
-    
+def get_gradient(old_img,new_img,thresh=None):
+    u,v = HornSchunck(old_img,new_img)
     magn = np.sqrt(np.power(u,2)+np.power(v,2))
-    # if thresh is None:
-    #     grad=magn
-    # else:
-    grad[np.where(magn>thresh)]=255
-    return grad
+    gradient = np.zeros_like(old_img)
+    gradient[np.where(magn>thresh)]=255
+    return gradient
