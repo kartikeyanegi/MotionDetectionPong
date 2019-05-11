@@ -18,18 +18,11 @@ class Game(object):
 
         ### Variables
         self.wt = 2 ## wait time
-        if self.flag:
-            self.p1x = self.W/30
-            self.p1y = self.H/2 - ((self.W/60)**2)/2
+        self.p1x = self.W/30
+        self.p1y = self.H/2 - ((self.W/60)**2)/2
 
-            self.p2x = self.W-(self.W/30)
-            self.p2y = self.H/2 - ((self.W/60)**2)/2
-        else:
-            self.p2x = self.W/30
-            self.p2y = self.H/2 - ((self.W/60)**2)/2
-
-            self.p1x = self.W-(self.W/30)
-            self.p1y = self.H/2 - ((self.W/60)**2)/2
+        self.p2x = self.W-(self.W/30)
+        self.p2y = self.H/2 - ((self.W/60)**2)/2
 
         self.p1score = 0
         self.p2score = 0
@@ -60,10 +53,7 @@ class Game(object):
         
     def opponent(self, data):
         y_loc2 = float(data['data'])
-        if self.flag:
-            self.p2y=self.H*y_loc2-self.paddle_height/2
-        else:
-            self.p1y=self.H*y_loc2-self.paddle_height/2
+        self.p2y=self.H*y_loc2-self.paddle_height/2
 
     # def update(self,y_loc1):
     #     for event in pygame.event.get():
@@ -89,12 +79,7 @@ class Game(object):
                     if event.key == pygame.K_SPACE:
                         self.running = False
             self.drawbg()
-            if self.flag:
-                self.p1y=self.H*y_loc1-self.paddle_height/2
-            else:
-                self.p2y=self.H*y_loc1-self.paddle_height/2
-
-
+            self.p1y=self.H*y_loc1-self.paddle_height/2
             # self.p2y=self.H*y_loc2-self.paddle_height/2
             self.upblnv()
             self.drawscore()
