@@ -8,7 +8,7 @@ class Server(object):
 
     def __init__(self, handler, host="localhost", port=6379, sender="cvproj", receiver="cvproj"):
         print(receiver, handler)
-        self.r = redis.Redis(host=host, port=port, socket_keepalive=True)
+        self.r = redis.Redis(host="SG-REDISCV-21018.servers.mongodirector.com", port=port, socket_keepalive=True, password="6M7TCXryAwdKn6nfNENpTexbdEcU6VSa")
         self.pubsub = self.r.pubsub()
         self.pubsub.subscribe(**{receiver:handler})
         self.pubsub.run_in_thread()
