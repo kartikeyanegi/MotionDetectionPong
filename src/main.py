@@ -1,19 +1,33 @@
+import argparse
+import sys
 from physics.pong import Game
 from motion.track import Tracker
 from server.run import Server
 from ui.menu import Menu
 
-player  = Tracker(color='blue')
-#p2  = Tracker(color='green')
-game = Game()
-s = Server(handler=game.opponent, host="localhost", sender="player1", receiver="player2")
-screen = game.get_screen()
-menu = Menu(screen)
 
-menu.main_menu()
+parser = argparse.ArgumentParser(description="Pong game")
+parser.add_argument("--host", help="Host IP of the server", default="localhost")
+parser.add_argument("--sender", help="Your username. It should be the same on their receiver end")
+parser.add_argument("--receiver", help="Your friend's username. It should be the same on their sender end")
+args = parser.parse_args()
+if args.sender == None or args.receiver == None:
+    print("Please enter sender and receiver username")
+    sys.exit(1)
 
-while True:
-    player.track(show=False)
-    s.send(player.y_loc)
-    #send(player.y_loc)
-    game.update(player.y_loc)
+
+def main():
+    player  = Tracker(color='blue')
+    game = Game()
+    s = Server(handler=game.opponent, host=args.host, sender=args.sender, receiver=args.receiver)
+    screen = game.get_screen()
+    menu = Menu(screen)
+    menu.main_menu()
+
+    while True:
+        player.track(show=False)
+        s.send(player.y_loc)
+        game.update(player.y_loc)
+
+if __name__ == "__main__":
+    main()
