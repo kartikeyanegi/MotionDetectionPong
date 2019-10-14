@@ -1,6 +1,6 @@
-# Computer Vision Project
+# Pong With Motion Detection
 
-This is the repository holding the source code for Computer Vision project Spring 2019.
+This is the repository holding the source code for the Computer Vision project Spring 2019.
 
 This Computer Vision project aimed to build a virtual Ping-pong game (called ‘pong’ for short) based on video motion detection using optical flow. We use the camera on a laptop for image capturing and the screenshot of color (blue and green) on a mobile device for input recognition and controlling the racquets.  Kalman filters are used for smooth and continuous motion of the racquets. Players can play it with their own with computers through the internet. The program was experimented under different conditions, including using different objects, speeds, and background. 
 
