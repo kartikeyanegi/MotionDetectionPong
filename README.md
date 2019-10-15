@@ -8,11 +8,11 @@ This Computer Vision project aimed to build a virtual Ping-pong game (called ‘
 
 Install the dependencies using `pip install -r requirements.txt`
 ```
-git clone https://github.com/TerminalWitchcraft/cvproj
+git clone https://github.com/kartikeyanegi/MotionDetectionPong
 cd src
 python3 main.py  --sender [name1] --receiver [name2]
 ```
-naem1 and name2 should be the name for two players. The names should be reversed at the other end. For instance, if player with name1 wishes to play with a player named name2, the sender and receiver option for player1 will be name1 and name2 respectively, whereas it would be the reverse for player with name2
+name1 and name2 should be the name for two players. The names should be reversed at the other end. For instance, if player with name1 wishes to play with a player named name2, the sender and receiver option for player1 will be name1 and name2 respectively, whereas it would be the reverse for player with name2
 
 # Project Structure
 
