@@ -3,4 +3,4 @@ redis==3.2.1
 pygame==1.9.5
 scipy==1.2.1
 numpy==1.16.2
-opencv_python==4.1.0.25
+opencv_python==4.1.1.26
